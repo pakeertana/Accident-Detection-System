@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'screens/welcome_page.dart';
 import 'screens/login_page.dart';
 import 'screens/signup_page.dart';
 import 'constants.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Load environment variables
+  await dotenv.load(fileName: "flutter.env"); // Ensure file is named .env
+
+  // Initialize Supabase
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  );
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -27,13 +40,19 @@ class MyApp extends StatelessWidget {
         textTheme: const TextTheme(
           // For the main "Welcome back!" / "Hello! Register" titles
           titleLarge: TextStyle(
-              fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black),
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
           bodyMedium: TextStyle(fontSize: 16, color: Colors.black),
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: kInputFill,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(kBorderRadius),
             borderSide: BorderSide.none,
@@ -56,7 +75,10 @@ class MyApp extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(kBorderRadius),
             ),
-            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            textStyle: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
         useMaterial3: true,
