@@ -1,7 +1,7 @@
 import 'dart:developer' as developer;
-import 'package:accident_resq/screens/welcome_page.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dashboard.dart';
 
 class UserDetailsPage extends StatefulWidget {
   final String userId; // ✅ Pass userId from signup
@@ -69,7 +69,7 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+        MaterialPageRoute(builder: (context) => const DashboardPage()),
       );
     } on PostgrestException catch (e) {
       // ✅ Handles database-related errors properly

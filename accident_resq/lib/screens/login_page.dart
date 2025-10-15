@@ -1,10 +1,76 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../constants.dart';
 import '../widgets/social_button_row.dart';
+import 'dashboard.dart'; // ✅ Import DashboardPage
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   static const routeName = '/login';
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final supabase = Supabase.instance.client;
+  bool _isLoading = false;
+
+  Future<void> _login() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      _showMessage('Please enter both email and password.');
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final res = await supabase.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+
+      if (res.user != null) {
+        // ✅ Successful login, navigate to Dashboard
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const DashboardPage()),
+        );
+      } else {
+        _showMessage('Login failed. Check your credentials.');
+      }
+    } on AuthException catch (e) {
+      _showMessage('Error: ${e.message}');
+    } catch (e) {
+      _showMessage('Unexpected error: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _showMessage(String msg) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,20 +89,22 @@ class LoginPage extends StatelessWidget {
               children: [
                 const SizedBox(height: 20),
                 Text(
-                  'Welcome back! Glad\nto see you. Again.',
+                  'Welcome back! Glad\nto see you again.',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 40),
 
-                const TextField(
+                TextField(
+                  controller: emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Enter your email',
                   ),
                 ),
                 const SizedBox(height: 16),
 
                 TextField(
+                  controller: passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     hintText: 'Enter your password',
@@ -54,7 +122,10 @@ class LoginPage extends StatelessWidget {
                     onPressed: () {},
                     child: const Text(
                       'Forgot Password?',
-                      style: TextStyle(color: kPrimaryDark, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        color: kPrimaryDark,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),
@@ -63,8 +134,12 @@ class LoginPage extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('Login'),
+                    onPressed: _isLoading ? null : _login,
+                    child: _isLoading
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : const Text('Login'),
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -74,7 +149,8 @@ class LoginPage extends StatelessWidget {
                     Expanded(child: Divider(color: Colors.grey)),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text('Or Login with', style: TextStyle(color: Colors.grey)),
+                      child: Text('Or Login with',
+                          style: TextStyle(color: Colors.grey)),
                     ),
                     Expanded(child: Divider(color: Colors.grey)),
                   ],
@@ -94,7 +170,8 @@ class LoginPage extends StatelessWidget {
                         WidgetSpan(
                           alignment: PlaceholderAlignment.middle,
                           child: GestureDetector(
-                            onTap: () => Navigator.of(context).pushReplacementNamed('/signup'),
+                            onTap: () => Navigator.of(context)
+                                .pushReplacementNamed('/signup'),
                             child: const Text(
                               'Register Now',
                               style: TextStyle(
