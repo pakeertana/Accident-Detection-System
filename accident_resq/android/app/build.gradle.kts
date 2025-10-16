@@ -29,6 +29,7 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
+    ndkVersion = "27.0.12077973"
 
     buildTypes {
         release {
