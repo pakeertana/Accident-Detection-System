@@ -76,9 +76,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-      ),
+      appBar: AppBar(automaticallyImplyLeading: false),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -136,9 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _login,
                     child: _isLoading
-                        ? const CircularProgressIndicator(
-                            color: Colors.white,
-                          )
+                        ? const CircularProgressIndicator(color: Colors.white)
                         : const Text('Login'),
                   ),
                 ),
@@ -149,8 +145,10 @@ class _LoginPageState extends State<LoginPage> {
                     Expanded(child: Divider(color: Colors.grey)),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text('Or Login with',
-                          style: TextStyle(color: Colors.grey)),
+                      child: Text(
+                        'Or Login with',
+                        style: TextStyle(color: Colors.grey),
+                      ),
                     ),
                     Expanded(child: Divider(color: Colors.grey)),
                   ],
@@ -170,8 +168,9 @@ class _LoginPageState extends State<LoginPage> {
                         WidgetSpan(
                           alignment: PlaceholderAlignment.middle,
                           child: GestureDetector(
-                            onTap: () => Navigator.of(context)
-                                .pushReplacementNamed('/signup'),
+                            onTap: () => Navigator.of(
+                              context,
+                            ).pushReplacementNamed('/signup'),
                             child: const Text(
                               'Register Now',
                               style: TextStyle(

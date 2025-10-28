@@ -1,16 +1,17 @@
+import 'package:accident_resq/screens/welcome_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'screens/welcome_page.dart';
 import 'screens/login_page.dart';
 import 'screens/signup_page.dart';
+import 'screens/dashboard.dart'; // NEW: Import DashboardPage
 import 'constants.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Load environment variables
-  await dotenv.load(fileName: "flutter.env"); // Ensure file is named .env
+  await dotenv.load(fileName: "flutter.env");
 
   // Initialize Supabase
   await Supabase.initialize(
@@ -18,7 +19,7 @@ Future<void> main() async {
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -88,6 +89,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const WelcomeScreen(),
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignUpPage(),
+        '/dashboard': (context) => const DashboardPage(), // NEW: Dashboard route added
       },
     );
   }

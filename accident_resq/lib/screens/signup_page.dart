@@ -113,7 +113,9 @@ class _SignUpPageState extends State<SignUpPage> {
                 TextField(
                   controller: confirmPasswordController,
                   obscureText: true,
-                  decoration: const InputDecoration(hintText: 'Confirm password'),
+                  decoration: const InputDecoration(
+                    hintText: 'Confirm password',
+                  ),
                 ),
                 const SizedBox(height: 32),
                 SizedBox(
@@ -150,8 +152,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         WidgetSpan(
                           alignment: PlaceholderAlignment.middle,
                           child: GestureDetector(
-                            onTap: () => Navigator.of(context)
-                                .pushReplacementNamed('/login'),
+                            onTap: () => Navigator.of(
+                              context,
+                            ).pushReplacementNamed('/login'),
                             child: const Text(
                               'Login Now',
                               style: TextStyle(

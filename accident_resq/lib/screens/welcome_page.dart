@@ -74,7 +74,10 @@ class WelcomeScreen extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(kBorderRadius),
                       ),
-                      textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      textStyle: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     child: const Text('Register'),
                   ),
