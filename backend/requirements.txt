@@ -1,0 +1,9 @@
+flask
+opencv-python
+ultralytics
+geocoder
+pyttsx3
+twilio
+firebase-admin
+numpy
+thread6
