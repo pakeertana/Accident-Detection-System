@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:http/http.dart' as http; // ✅ Added for backend request
 import '../constants.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -13,11 +14,55 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   final supabase = Supabase.instance.client;
   bool _isOn = false;
+  bool _isLoading = false; // ✅ To show loading state
 
-  void _toggleSwitch() {
+  // 🧠 Replace this with your laptop's local IP (shown when you run Flask)
+  final String backendUrl = "http://172.20.10.2:5000/start_accident_detection";
+
+  void _toggleSwitch() async {
+    if (_isLoading) return; // Prevent double taps
+
     setState(() {
-      _isOn = !_isOn;
+      _isLoading = true;
     });
+
+    if (!_isOn) {
+      // 🔥 Turn ON → Start detection by calling backend
+      try {
+        final response = await http.post(Uri.parse(backendUrl));
+
+        if (response.statusCode == 200) {
+          setState(() {
+            _isOn = true;
+          });
+          _showSnackBar("✅ Accident detection started successfully!");
+        } else {
+          _showSnackBar("⚠ Failed to start detection (${response.statusCode})");
+        }
+      } catch (e) {
+        _showSnackBar("❌ Error connecting to backend: $e");
+      }
+    } else {
+      // ⏸ Turn OFF → Just update UI (you can later add stop endpoint)
+      setState(() {
+        _isOn = false;
+      });
+      _showSnackBar("🛑 Detection stopped.");
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: const TextStyle(color: Colors.white)),
+        backgroundColor: Colors.black87,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   Future<void> _logout() async {
@@ -73,7 +118,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
                 const SizedBox(height: 50),
 
-                // Toggle Button
+                // 🔘 Toggle Button
                 GestureDetector(
                   onTap: _toggleSwitch,
                   child: AnimatedContainer(
@@ -93,15 +138,20 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                       ],
                     ),
-                    child: Text(
-                      _isOn ? 'ON' : 'OFF',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
-                      ),
-                    ),
+                    child: _isLoading
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 3,
+                          )
+                        : Text(
+                            _isOn ? 'ON' : 'OFF',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 48,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 2,
+                            ),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -119,7 +169,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
                 const SizedBox(height: 60),
 
-                // Logout button
+                // 🔐 Logout Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
