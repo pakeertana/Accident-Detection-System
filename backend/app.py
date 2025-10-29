@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import threading
+import os
 import cv2
 from ultralytics import YOLO
 import geocoder
@@ -10,7 +11,7 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 
 # ================== Supabase Setup ==================
-load_dotenv()
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
 
 # Read from environment variables
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -23,9 +24,7 @@ supabase = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
 # ================== Flask Setup ==================
 app = Flask(__name__)
 
-# ================== Twilio Setup ==================
-load_dotenv()
-
+# ================== Twilio Setup ================cd
 account_sid = os.getenv("TWILIO_SID")
 auth_token = os.getenv("TWILIO_AUTH_TOKEN")
 twilio_client = TwilioClient(account_sid, auth_token)
